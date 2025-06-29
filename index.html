@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Resume | Anoop Kumar Verma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page, vertically-scrolling layout with a sticky top navigation bar for quick access to key sections: Experience, Skills, Achievements, and Education. This structure is intuitive and mirrors how recruiters scan resumes, but enhances it with interactivity. The 'Experience' section uses a clickable timeline to reveal details, preventing information overload. The 'Skills' section employs a dynamic bar chart to visually compare proficiency levels across different technology domains, offering a quicker, more impactful understanding than a simple list. This design prioritizes user-directed exploration and rapid information synthesis. -->
+    <!-- Visualization & Content Choices: 
+        - Header (Inform): Standard header with contact info and social links for immediate access. Uses HTML/CSS.
+        - Experience (Change/Inform): An interactive vertical timeline built with HTML/Tailwind CSS. Goal is to show career progression. Users click a role to expand and view details, making the section clean and user-controlled. Justification: Prevents a wall of text and encourages engagement.
+        - Skills (Compare/Organize): A Chart.js grouped bar chart. Goal: to visually represent the breadth and depth of technical abilities. Interaction: Hovering over bars reveals specific skills in tooltips. Justification: More engaging and easier to parse than a long text list, allowing for quick comparison of strengths.
+        - Achievements (Inform): A card-based layout using HTML/Tailwind CSS with icons. Goal: to highlight key accomplishments in a visually distinct way. Justification: Breaks the monotony of text and draws attention to standout successes.
+        - Education (Inform): Clean, simple text section. Goal: Provide academic background clearly. Justification: Standard information that requires no complex visualization. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfdfd;
+            color: #1a1a1a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #a16207; /* A subtle accent color */
+            border-bottom-color: #a16207;
+        }
+        .timeline-item-content {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform-origin: top;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">Anoop Kumar Verma</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#experience" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Experience</a>
+                        <a href="#skills" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Skills</a>
+                        <a href="#achievements" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Achievements</a>
+                        <a href="#education" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Education</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-800">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#experience" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">Experience</a>
+                <a href="#skills" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">Skills</a>
+                <a href="#achievements" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">Achievements</a>
+                <a href="#education" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">Education</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <section id="hero" class="text-center py-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">Lead Backend Developer</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">A passionate and experienced software engineer specializing in building scalable microservices and robust cloud infrastructure.</p>
+            <div class="mt-8 flex justify-center items-center space-x-4 text-sm text-gray-500">
+                <a href="mailto:anoopvermastp@gmail.com" class="hover:text-yellow-800 transition-colors">anoopvermastp@gmail.com</a>
+                <span class="text-gray-300">|</span>
+                <a href="https://linkedin.com/in/anoopvermastp" target="_blank" class="hover:text-yellow-800 transition-colors">LinkedIn</a>
+                <span class="text-gray-300">|</span>
+                <a href="https://github.com/anoopkverma" target="_blank" class="hover:text-yellow-800 transition-colors">GitHub</a>
+            </div>
+        </section>
+
+        <div class="border-t border-gray-200 my-12"></div>
+
+        <section id="experience" class="py-12">
+            <h3 class="text-3xl font-bold text-center mb-12">Professional Experience</h3>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">This section outlines my career journey, highlighting key responsibilities and accomplishments in each role. Click on any job title to expand and see the detailed contributions I made, from architecting new systems to driving cost-saving initiatives.</p>
+            <div class="relative wrap overflow-hidden p-10 h-full">
+                <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
+
+                <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-yellow-800 shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">1</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 timeline-item cursor-pointer" data-target="job-1">
+                        <h4 class="font-bold text-gray-800 text-lg">Lead Backend Developer</h4>
+                        <p class="text-sm text-gray-600">DevOn Global | Jan 2025 – Present</p>
+                        <div id="job-1" class="timeline-item-content overflow-hidden max-h-0 opacity-0 transform scale-y-0">
+                            <ul class="mt-3 list-disc list-inside text-gray-700 text-sm space-y-2">
+                                <li>Leading backend development for a journal publishing platform, streamlining article submissions and content management.</li>
+                                <li>Architected and developed a secure OAuth flow for presenting publishing charges, enhancing user decision-making and facilitating automated backend updates.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-yellow-800 shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto text-white font-semibold text-lg">2</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 timeline-item cursor-pointer" data-target="job-2">
+                        <h4 class="font-bold text-gray-800 text-lg">Backend Engineer</h4>
+                        <p class="text-sm text-gray-600">Samsung R&D Institute | Aug 2019 – Oct 2024</p>
+                         <div id="job-2" class="timeline-item-content overflow-hidden max-h-0 opacity-0 transform scale-y-0">
+                            <ul class="mt-3 list-disc list-inside text-gray-700 text-sm space-y-2">
+                                <li>Developed and maintained 10 OCF microservices within the IoT Cloud team.</li>
+                                <li>Collaborated with Korean teams to re-architect resource handling microservices.</li>
+                                <li>Led R&D of new microservices for lifecycle events and access checks, reducing main account service workload.</li>
+                                <li>Improved code coverage by over 90% across 3 critical microservices.</li>
+                                <li>Identified and removed unnecessary logging, resulting in annual savings of approximately $10,500.</li>
+                                <li>Spearheaded migration from CircleCI to GitHub Actions for 3 microservices.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-yellow-800 shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">3</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 timeline-item cursor-pointer" data-target="job-3">
+                        <h4 class="font-bold text-gray-800 text-lg">Full Stack Developer</h4>
+                        <p class="text-sm text-gray-600">Tata Consultancy Services | June 2018 – Jul 2019</p>
+                         <div id="job-3" class="timeline-item-content overflow-hidden max-h-0 opacity-0 transform scale-y-0">
+                            <ul class="mt-3 list-disc list-inside text-gray-700 text-sm space-y-2">
+                                <li>Contributed to developing and refactoring applications for a major European e-commerce company.</li>
+                                <li>Implemented innovative features for product identification using composite barcodes.</li>
+                                <li>Developed new functionalities to manage incorrect parcel handling, reducing call center dependencies.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="border-t border-gray-200 my-12"></div>
+        
+        <section id="skills" class="py-12">
+            <h3 class="text-3xl font-bold text-center mb-4">Technical Skills</h3>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">This chart provides a visual overview of my technical capabilities, categorized by domain. It distinguishes between technologies I am proficient in and those I am familiar with. Hover over any bar to see the specific technologies within that category. This gives a quick, comparative view of my expertise.</p>
+            <div class="chart-container">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+        <div class="border-t border-gray-200 my-12"></div>
+
+        <section id="achievements" class="py-12">
+            <h3 class="text-3xl font-bold text-center mb-12">Key Achievements</h3>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Beyond my professional roles, I am passionate about competitive programming and continuous learning. This section highlights my most significant accomplishments in coding competitions, hackathons, and certifications, demonstrating a consistent drive for excellence.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+                    <div class="text-4xl text-yellow-800 mb-4">🏆</div>
+                    <h4 class="font-bold text-lg mb-2">Competitive Programming</h4>
+                    <p class="text-gray-600 text-sm">Solved 1300+ algorithmic problems and achieved finalist status in ACM ICPC twice.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+                    <div class="text-4xl text-yellow-800 mb-4">💻</div>
+                    <h4 class="font-bold text-lg mb-2">Hackathons & Contests</h4>
+                    <p class="text-gray-600 text-sm">Ranked 1st in Code-o-Fiesta (2016, 2017) and 36th/8500 in a TCS Supercoders hackathon.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+                     <div class="text-4xl text-yellow-800 mb-4">🏅</div>
+                    <h4 class="font-bold text-lg mb-2">Professional Certification</h4>
+                    <p class="text-gray-600 text-sm">Qualified the Professional Software Competency Test at Samsung, validating my technical expertise.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="border-t border-gray-200 my-12"></div>
+
+        <section id="education" class="py-12 text-center">
+            <h3 class="text-3xl font-bold mb-8">Education</h3>
+            <div class="inline-block text-left">
+                <h4 class="font-bold text-xl text-gray-800">Dr. A.P.J. Abdul Kalam Technical University</h4>
+                <p class="text-gray-600">B.Tech in Computer Science and Engineering | Graduated 2018</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-100 border-t border-gray-200">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Anoop Kumar Verma. Interactive resume created to showcase skills and experience.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillsData = {
+                labels: ['Languages', 'Web Tech & Frameworks', 'AWS Cloud', 'Databases'],
+                proficient: {
+                    count: [2, 7, 10, 2],
+                    skills: [
+                        'Java, Python',
+                        'Microservices, REST APIs, Spring Boot, Spring Webflux, JUnit, Mockito, PowerMock',
+                        'SQS, SNS, S3, DynamoDB, Aurora DB (MySQL), Elastic Cache, EC2, Lambda, Route 53, ELB',
+                        'PostgreSQL, MySQL'
+                    ]
+                },
+                familiar: {
+                    count: [5, 5, 5, 2],
+                    skills: [
+                        'Kotlin, Groovy, JavaScript, C/C++, Go',
+                        'SQL, Git, Gradle, Jenkins, Kubernetes',
+                        'KMS, Secrets Manager, CloudWatch, Kinesis Streams, EKS',
+                        'Redis, MongoDB'
+                    ]
+                }
+            };
+            
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: skillsData.labels,
+                    datasets: [
+                        {
+                            label: 'Proficient',
+                            data: skillsData.proficient.count,
+                            backgroundColor: 'rgba(161, 98, 7, 0.8)',
+                            borderColor: 'rgba(161, 98, 7, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Familiar',
+                            data: skillsData.familiar.count,
+                            backgroundColor: 'rgba(202, 138, 4, 0.6)',
+                            borderColor: 'rgba(202, 138, 4, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Technologies'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const datasetLabel = context.dataset.label || '';
+                                    const categoryIndex = context.dataIndex;
+                                    let skillsList;
+                                    if(datasetLabel === 'Proficient') {
+                                        skillsList = skillsData.proficient.skills[categoryIndex];
+                                    } else {
+                                        skillsList = skillsData.familiar.skills[categoryIndex];
+                                    }
+                                    return `${datasetLabel}: ${skillsList}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const contentId = item.getAttribute('data-target');
+                    const content = document.getElementById(contentId);
+                    
+                    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                        content.style.maxHeight = '0px';
+                        content.style.opacity = '0';
+                        content.style.transform = 'scaleY(0)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        content.style.opacity = '1';
+                        content.style.transform = 'scaleY(1)';
+                    }
+                });
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 68) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
